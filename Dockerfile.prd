@@ -1,0 +1,9 @@
+FROM golang:latest AS builder
+WORKDIR /app
+COPY . .
+RUN GOOS=linux CGO_ENABLED=0 go build -ldflags="-w -s" -o rate-limiter ./cmd/main.go
+
+FROM scratch
+COPY --from=builder /app/rate-limiter /
+COPY .env /
+CMD ["/rate-limiter"]

@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - rate-limit-net
+
+  rate-limiter:
+    build:
+      context: .
+      dockerfile: Dockerfile.prd
+    depends_on:
+      - redis
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    networks:
+      - rate-limit-net
+
+networks:
+  rate-limit-net:
+    driver: bridge
